@@ -7,6 +7,6 @@ class TestConfig(BaseConfig):
         "user": 'yjgao',
         "password": '123456',
         "port": 5432,
-        "host": "ec2-184-72-230-93.compute-1.amazonaws.com",
+        "host": "127.0.0.1",
         "max_connections": 20
     }
