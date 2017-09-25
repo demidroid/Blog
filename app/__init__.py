@@ -11,7 +11,7 @@ from .home import home_bp
 
 def create_app(config_name):
     app = Sanic('Blog')
-    app.config.from_envvar(config[config_name])
+    app.config.from_object(config[config_name])
 
     app.blueprint(auth_bp)
     app.blueprint(home_bp)
