@@ -1,8 +1,8 @@
 # Blog Api
 
-## /register
+## [/register] (https://lome-blog.herokuapp.com/)
 * GET
-```js
+```python
 HTTP/1.1 200 OK
 Connection: keep-alive
 Content-Length: 17
@@ -12,7 +12,7 @@ Keep-Alive: 60
 <h1>Register</h1>
 ```
 * POST
-```js
+```python
 # Success
 HTTP/1.1 200 OK
 Connection: keep-alive
@@ -38,9 +38,9 @@ Keep-Alive: 60
 }
 ```
 
-## /login
+## [/login] (https://lome-blog.herokuapp.com/)
 * GET
-```
+```python
 HTTP/1.1 200 OK
 Connection: keep-alive
 Content-Length: 17
@@ -50,7 +50,7 @@ Keep-Alive: 60
 <h1>Login</login>
 ```
 * POST
-```
+```python
 # Success
 HTTP/1.1 200 OK
 Connection: keep-alive
