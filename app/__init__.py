@@ -1,10 +1,21 @@
 from sanic import Sanic
+from peewee_async import PooledPostgresqlDatabase, Manager
 
 from .config import config
-from app.models import tables
+from .models import database
+from .models.basemodel import BaseModel
+from .auth import auth_bp
 
 
 def create_app(config_name):
     app = Sanic('Blog')
-    app.config.from_envvar(config[config_name])
+    app.config.from_object(config[config_name])
 
+    app.blueprint(auth_bp)
+
+    @app.listener('before_server_start')
+    async def set_db(_app, _loop):
+        database.initialize(PooledPostgresqlDatabase(**app.config.DATABASE))
+        BaseModel.pee = Manager(database, loop=_loop)
+
+    return app

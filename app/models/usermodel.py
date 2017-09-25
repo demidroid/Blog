@@ -1,14 +1,20 @@
-from peewee import IntegerField, CharField
 from .basemodel import BaseModel
+from peewee import *
+from app.utils.security import generate_password, verify_password
 
 
 class User(BaseModel):
-    id = IntegerField(primary_key=True)
+    email = CharField(unique=True)
     username = CharField()
-    password = CharField()
+    password = CharField(max_length=256)
+
+    def verify(self, password):
+        return verify_password(password, self.password)
 
     @classmethod
-    def user_id(cls):
-        query = cls.select().where(cls.id == 1).sql()
-        str_query = pg_sql(*query)
-        print(str_query)
+    async def get_by_email(cls):
+        query = cls.select()
+        result = await cls.pee.execute(query)
+        if result:
+            return result._result
+        return
