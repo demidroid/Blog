@@ -7,7 +7,7 @@ class DevelopConfig(BaseConfig):
         "database": environ.get('DATABASE'),
         "user": environ.get('USER'),
         "password": environ.get('PASSWORD'),
-        "port": environ.get('PORT'),
-        "host": environ.get('HOST'),
+        "port": 5432,
+        "host": "ec2-184-72-230-93.compute-1.amazonaws.com",
         "max_connections": 20
     }

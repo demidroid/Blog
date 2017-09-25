@@ -1,5 +1,6 @@
 from .development import DevelopConfig
-
+from .testing import TestConfig
 config = {
-    "development": DevelopConfig
+    "development": DevelopConfig,
+    "testing": TestConfig
 }
