@@ -13,8 +13,7 @@ def runserver():
     app = create_app('development')
     app.run(
         debug=True,
-        host=os.environ.get('HOST'),
-        port=os.environ.get('PORT')
+        host=os.environ.get('HOST')
     )
 
 
