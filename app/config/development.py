@@ -8,6 +8,6 @@ class DevelopConfig(BaseConfig):
         "user": environ.get('USER'),
         "password": environ.get('PASSWORD'),
         "port": environ.get('PORT'),
-        "host": environ.gget('HOST'),
+        "host": environ.get('HOST'),
         "max_connections": 20
     }
