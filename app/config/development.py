@@ -1,12 +1,13 @@
 from .base import BaseConfig
+from os import environ
 
 
 class DevelopConfig(BaseConfig):
     DATABASE = {
-        "database": "blog",
-        "user": "yjgao",
-        "password": "123456",
-        "port": 5432,
-        "host": '127.0.0.1',
+        "database": environ.get('DATABASE'),
+        "user": environ.get('USER'),
+        "password": environ.get('PASSWORD'),
+        "port": environ.get('PORT'),
+        "host": environ.gget('HOST'),
         "max_connections": 20
     }
