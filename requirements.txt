@@ -5,6 +5,7 @@ chardet==3.0.4
 click==6.7
 httptools==0.0.9
 idna==2.6
+Markdown==2.6.9
 marshmallow==2.13.6
 peewee==2.10.1
 peewee-async==0.5.7
