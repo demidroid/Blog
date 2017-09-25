@@ -11,10 +11,7 @@ def cli():
 @cli.command()
 def runserver():
     app = create_app('development')
-    app.run(
-        debug=True,
-        host=os.environ.get('HOST')
-    )
+    app.run(debug=True)
 
 
 @cli.command()
