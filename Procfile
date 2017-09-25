@@ -1,1 +1,1 @@
-web: python run.py create_table && python run.py runserver $PORT
+web: python run.py create_table && python run.py runserver
