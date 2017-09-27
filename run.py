@@ -19,7 +19,7 @@ def create_table():
     from peewee_async import PooledPostgresqlDatabase
     from app.models import database, tables
 
-    app = create_app('development')
+    app = create_app('testing')
     database.initialize(PooledPostgresqlDatabase(**app.config.DATABASE))
     database.drop_tables(tables, safe=True)
     database.create_tables(tables, safe=True)
@@ -29,6 +29,7 @@ def create_table():
 def local():
     app = create_app('testing')
     app.run(debug=True)
+
 
 if __name__ == '__main__':
     cli()

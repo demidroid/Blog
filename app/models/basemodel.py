@@ -33,3 +33,11 @@ class BaseModel(peewee.Model):
         except cls.error:
             result = None
         return result
+
+    async def db_update(self, pk, **kwargs):
+        query = self.update(**kwargs).where(self.id == pk)
+        try:
+            result = await self.pee.execute(query)
+        except self.error:
+            result = None
+        return result

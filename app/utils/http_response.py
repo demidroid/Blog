@@ -29,11 +29,6 @@ class Response:
         "message": "数据库错误"
     }
 
-    error_1005 = {
-        "code": 1005,
-        "message": "该邮箱已注册"
-    }
-
     system_404 = {
         "code": 404,
         "message": "Not Found"

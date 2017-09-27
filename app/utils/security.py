@@ -12,7 +12,7 @@ def generate_password(password, hash_name: str='sha256', salt_length: int=8, ite
     else:
         password_byte = password
 
-    salt_str = ''.join(random.sample(SALT_STR, salt_length))
+    salt_str = get_random_str(salt_length)
     salt_byte = salt_str.encode()
 
     iterations_str = str(iterations)
@@ -39,3 +39,8 @@ def verify_password(password, hash_password):
         return True
     else:
         return False
+
+
+def get_random_str(length: int):
+    __random = ''.join(random.sample(SALT_STR, length))
+    return __random

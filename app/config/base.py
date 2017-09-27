@@ -1,4 +1,4 @@
 
 
 class BaseConfig:
-    pass
+    TOKEN_EXPIRE = 2592000

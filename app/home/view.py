@@ -1,5 +1,3 @@
-import codecs
-import markdown
 from sanic.response import file
 from sanic import Blueprint
 from app.base import BaseView

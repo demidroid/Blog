@@ -1,3 +1,7 @@
+import aioredis
+import aiosmtplib
+from email.mime.text import MIMEText
+
 from sanic import Sanic
 from peewee_async import PooledPostgresqlDatabase, Manager
 
@@ -20,5 +24,6 @@ def create_app(config_name):
     async def set_db(_app, _loop):
         database.initialize(PooledPostgresqlDatabase(**app.config.DATABASE))
         BaseModel.pee = Manager(database, loop=_loop)
+        app.redis = await aioredis.create_pool(**app.config.REDIS)
 
     return app

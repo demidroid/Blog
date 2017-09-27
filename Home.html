@@ -1,88 +1,97 @@
 <html lang="zh-CN"><meta charset="UTF-8"/>
 <h1>Blog Api</h1>
-<h2><a href="https://lome-blog.herokuapp.com/register">/register</a></h2>
+<h2><a href="https://lome-blog.herokuapp.com/">/register</a></h2>
 <ul>
 <li>GET</li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span> <span class="mi">200</span> <span class="n">OK</span>
-<span class="n">Connection</span><span class="p">:</span> <span class="n">keep</span><span class="o">-</span><span class="n">alive</span>
-<span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span> <span class="mi">17</span>
-<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">;</span> <span class="n">charset</span><span class="o">=</span><span class="n">utf</span><span class="o">-</span><span class="mi">8</span>
-<span class="n">Keep</span><span class="o">-</span><span class="n">Alive</span><span class="p">:</span> <span class="mi">60</span>
+<div class="codehilite"><pre><span></span>HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 17
+Content-Type: text/html; charset=utf-8
+Keep-Alive: 60
 
-<span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">Register</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+<span class="nt">&lt;h1&gt;</span>Register<span class="nt">&lt;/h1&gt;</span>
 </pre></div>
 
 
 <ul>
 <li>POST</li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="c1"># Success</span>
-<span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span> <span class="mi">200</span> <span class="n">OK</span>
-<span class="n">Connection</span><span class="p">:</span> <span class="n">keep</span><span class="o">-</span><span class="n">alive</span>
-<span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span> <span class="mi">107</span>
-<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
-<span class="n">Keep</span><span class="o">-</span><span class="n">Alive</span><span class="p">:</span> <span class="mi">60</span>
+<div class="codehilite"><pre><span></span># Success
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 107
+Content-Type: application/json
+Keep-Alive: 60
 
-<span class="p">{</span>
-    <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="s2">&quot;{</span><span class="se">\&quot;</span><span class="s2">email</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">aaa233@aa.com</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">id</span><span class="se">\&quot;</span><span class="s2">: 2, </span><span class="se">\&quot;</span><span class="s2">username</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">loyo</span><span class="se">\&quot;</span><span class="s2">}&quot;</span>
-<span class="p">}</span>
-<span class="c1"># Error</span>
-<span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span> <span class="mi">400</span> <span class="n">Bad</span> <span class="n">Request</span>
-<span class="n">Connection</span><span class="p">:</span> <span class="n">keep</span><span class="o">-</span><span class="n">alive</span>
-<span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span> <span class="mi">62</span>
-<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
-<span class="n">Keep</span><span class="o">-</span><span class="n">Alive</span><span class="p">:</span> <span class="mi">60</span>
+{
+    &quot;code&quot;: 0,
+    &quot;message&quot;: &quot;success&quot;,
+    &quot;result&quot;: {
+        &quot;email&quot;: &quot;aaa233@aa.com&quot;,
+        &quot;id&quot;: 2,
+        &quot;username&quot;: &quot;loyo&quot;
+    }
+}
 
-<span class="p">{</span>
-    <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="mi">1005</span><span class="p">,</span>
-    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;该邮箱已注册&quot;</span>
-<span class="p">}</span>
+# Error
+HTTP/1.1 400 Bad Request
+Connection: keep-alive
+Content-Length: 62
+Content-Type: application/json
+Keep-Alive: 60
+
+{
+    &quot;code&quot;: 1005,
+    &quot;message&quot;: &quot;该邮箱已注册&quot;
+}
 </pre></div>
 
 
-<h2><a href="https://lome-blog.herokuapp.com/login">/login</a></h2>
+<h2><a href="https://lome-blog.herokuapp.com/">/login</a></h2>
 <ul>
 <li>GET</li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span> <span class="mi">200</span> <span class="n">OK</span>
-<span class="n">Connection</span><span class="p">:</span> <span class="n">keep</span><span class="o">-</span><span class="n">alive</span>
-<span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span> <span class="mi">17</span>
-<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">;</span> <span class="n">charset</span><span class="o">=</span><span class="n">utf</span><span class="o">-</span><span class="mi">8</span>
-<span class="n">Keep</span><span class="o">-</span><span class="n">Alive</span><span class="p">:</span> <span class="mi">60</span>
+<div class="codehilite"><pre><span></span>HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 17
+Content-Type: text/html; charset=utf-8
+Keep-Alive: 60
 
-<span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">Login</span><span class="o">&lt;/</span><span class="n">login</span><span class="o">&gt;</span>
+<span class="nt">&lt;h1&gt;</span>Login<span class="nt">&lt;/login&gt;</span>
 </pre></div>
 
 
 <ul>
 <li>POST</li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="c1"># Success</span>
-<span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span> <span class="mi">200</span> <span class="n">OK</span>
-<span class="n">Connection</span><span class="p">:</span> <span class="n">keep</span><span class="o">-</span><span class="n">alive</span>
-<span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span> <span class="mi">107</span>
-<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
-<span class="n">Keep</span><span class="o">-</span><span class="n">Alive</span><span class="p">:</span> <span class="mi">60</span>
+<div class="codehilite"><pre><span></span># Success
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 107
+Content-Type: application/json
+Keep-Alive: 60
 
-<span class="p">{</span>
-    <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="s2">&quot;{</span><span class="se">\&quot;</span><span class="s2">email</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">aaa233@aa.com</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">id</span><span class="se">\&quot;</span><span class="s2">: 2, </span><span class="se">\&quot;</span><span class="s2">username</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">loyo</span><span class="se">\&quot;</span><span class="s2">}&quot;</span>
-<span class="p">}</span>
-<span class="c1"># Error</span>
-<span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span> <span class="mi">400</span> <span class="n">Bad</span> <span class="n">Request</span>
-<span class="n">Connection</span><span class="p">:</span> <span class="n">keep</span><span class="o">-</span><span class="n">alive</span>
-<span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span> <span class="mi">68</span>
-<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
-<span class="n">Keep</span><span class="o">-</span><span class="n">Alive</span><span class="p">:</span> <span class="mi">60</span>
+{
+    &quot;code&quot;: 0,
+    &quot;message&quot;: &quot;success&quot;,
+    &quot;result&quot;: {
+        &quot;email&quot;: &quot;aaa233@aa.com&quot;,
+        &quot;id&quot;: 2,
+        &quot;username&quot;: &quot;loyo&quot;
+    }
+}
 
-<span class="p">{</span>
-    <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="mi">1001</span><span class="p">,</span>
-    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;账号或密码错误&quot;</span>
-<span class="p">}</span>
+# Error
+HTTP/1.1 400 Bad Request
+Connection: keep-alive
+Content-Length: 68
+Content-Type: application/json
+Keep-Alive: 60
+
+{
+    &quot;code&quot;: 1001,
+    &quot;message&quot;: &quot;账号或密码错误&quot;
+}
 </pre></div>
-
 </html>

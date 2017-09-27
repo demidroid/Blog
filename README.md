@@ -1,5 +1,5 @@
 # A Blog
-Please go [The demo Web](https://lome-blog.herokuapp.com/) to see
+Please go [Here](https://lome-blog.herokuapp.com/) to see
 detail
 
 ### 组件

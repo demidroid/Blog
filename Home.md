@@ -1,8 +1,8 @@
 # Blog Api
 
-## [/register] (https://lome-blog.herokuapp.com/)
+## [/register](https://lome-blog.herokuapp.com/)
 * GET
-```python
+```
 HTTP/1.1 200 OK
 Connection: keep-alive
 Content-Length: 17
@@ -12,7 +12,7 @@ Keep-Alive: 60
 <h1>Register</h1>
 ```
 * POST
-```python
+```
 # Success
 HTTP/1.1 200 OK
 Connection: keep-alive
@@ -23,8 +23,13 @@ Keep-Alive: 60
 {
     "code": 0,
     "message": "success",
-    "result": "{\"email\": \"aaa233@aa.com\", \"id\": 2, \"username\": \"loyo\"}"
+    "result": {
+        "email": "aaa233@aa.com",
+        "id": 2,
+        "username": "loyo"
+    }
 }
+
 # Error
 HTTP/1.1 400 Bad Request
 Connection: keep-alive
@@ -38,9 +43,9 @@ Keep-Alive: 60
 }
 ```
 
-## [/login] (https://lome-blog.herokuapp.com/)
+## [/login](https://lome-blog.herokuapp.com/)
 * GET
-```python
+```
 HTTP/1.1 200 OK
 Connection: keep-alive
 Content-Length: 17
@@ -50,7 +55,7 @@ Keep-Alive: 60
 <h1>Login</login>
 ```
 * POST
-```python
+```
 # Success
 HTTP/1.1 200 OK
 Connection: keep-alive
@@ -61,8 +66,13 @@ Keep-Alive: 60
 {
     "code": 0,
     "message": "success",
-    "result": "{\"email\": \"aaa233@aa.com\", \"id\": 2, \"username\": \"loyo\"}"
+    "result": {
+        "email": "aaa233@aa.com",
+        "id": 2,
+        "username": "loyo"
+    }
 }
+
 # Error
 HTTP/1.1 400 Bad Request
 Connection: keep-alive

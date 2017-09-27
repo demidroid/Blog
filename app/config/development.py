@@ -11,3 +11,9 @@ class DevelopConfig(BaseConfig):
         "host": "ec2-184-72-230-93.compute-1.amazonaws.com",
         "max_connections": 20
     }
+
+    REDIS = {
+        "address": ('localhost', 6379),
+        "minsize": 5,
+        "maxsize": 10
+    }
