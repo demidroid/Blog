@@ -27,9 +27,11 @@ def covert_msg(email_str):
 def email_msg(request, to_addr, username, hash_str):
     config_msg = request.app.config.EMAIL
     try:
-        msg = MIMEText("<html><body>Hello, {}, Click <a href={}>Here</a>To "
-                       "Confirm Your Account </body></html>.".format(username, request.host + '/confirm/' + hash_str),
-                       "html", "utf-8")
+        url = 'http://' + str(request.host) + '/confirm/' + hash_str
+        connent = "<html><body>Hello, {}, Click <a href='{}'>Here</a>To " \
+                  "Confirm Your Account </body></html>.".format(username, url)
+
+        msg = MIMEText(connent, "html", "utf-8")
 
         from_addr = config_msg.get('from_addr')
         password = config_msg.get('password')
@@ -49,4 +51,3 @@ def email_msg(request, to_addr, username, hash_str):
         print('send success')
         status = True
     return status
-

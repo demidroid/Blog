@@ -24,7 +24,7 @@ class LoginView(BaseView):
         password = self.request_arg.get('password')
 
         user = await User.db_get(email=email)
-        if not user or not verify_password(password, user.password):
+        if not (user and verify_password(password, user.password) and user.active):
             return json(Response.make(code=1001), status=400)
 
         self._check_data(user, UserSchema())
@@ -51,11 +51,6 @@ class RegisterView(BaseView):
         if user or not email_status:
             return json(Response.make(code=1002), status=400)
 
-        password = generate_password(self.request_arg.get('password'))
-        self.request_arg.update({
-            "password": password
-        })
-
         current_user = await User.db_create(**self.request_arg)
         await current_user.gen_confirm_code(request, token)
 
@@ -66,18 +61,19 @@ class ConfirmView(BaseView):
 
     async def get(self, request, token):
         with await request.app.redis as c:
-            key, user_id = c.hmget(token, 'key', 'id')
+            key, user_id = await c.hmget(token, 'key', 'id')
             user = await User.db_get(id=user_id)
             if not (key.decode() == token and
-                    user):
+                    user) or \
+                    request.get('current_user') or \
+                    user.active:
                 return json(Response.make(code=1002), status=401)
-
-        token = await user.db_update(pk=user.id, active=True)
+        await user.db_update(pk=user.id, active=True)
         data = {
-            "token": token
+            "token": key
         }
         return json(Response.make(result=data))
 
 auth_bp.add_route(LoginView.as_view(), '/login')
 auth_bp.add_route(RegisterView.as_view(), '/register')
-auth_bp.add_route(ConfirmView.as_view(), '/confirm/<token:str>')
+auth_bp.add_route(ConfirmView.as_view(), '/confirm/<token>')
