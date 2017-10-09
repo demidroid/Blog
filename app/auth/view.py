@@ -183,7 +183,8 @@ class ConfirmView(BaseView):
                     request.get('current_user') or \
                     user.active:
                 return json(Response.make(code=1002), status=401)
-        await user.db_update(pk=user.id, active=True)
+        user.active = True
+        await user.db_update()
         data = {
             "token": key
         }
@@ -194,12 +195,70 @@ class ChangeAuthView(BaseView):
     decorators = [login_require('login')]
 
     async def post(self, request):
+        """
+        @api {post} /account 修改邮箱
+        @apiVersion 0.0.1
+        @apiName Confirm-get
+        @apiDescription 账户邮箱激活
+        @apiGroup Auth
+
+        @apiSuccessExample {json} Success-Response:
+        HTTP/1.1 200 OK
+        Connection: keep-alive
+        Content-Length: 49
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        HTTP/1.1 200 OK
+        Connection: keep-alive
+        Content-Length: 49
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 0,
+            "message": "success",
+            "result": "Success"
+        }
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 400 Bad Request
+        Connection: keep-alive
+        Content-Length: 62
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1000,
+            "message": "系统错误"
+        }
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 400 Bad Request
+        Connection: keep-alive
+        Content-Length: 62
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1002,
+            "message": "请求参数有误",
+            "result": {
+                "email": [
+                    "Missing data for required field."
+                ]
+            }
+        }
+
+
+        """
         current_user = request.get("current_user")
         self._check_request(request, UserSchema)
         if self.error:
             return self.error_resp
 
         email = self.request_arg.get('email')
+        password = self.request_arg.get('password')
         exist = await User.db_get(email=email)
         if email == current_user.email and\
                 exist:
@@ -208,12 +267,17 @@ class ChangeAuthView(BaseView):
         with await request.app.redis as coon:
             token = request.headers.get('authorization').split(" ")[1]
             await coon.delete(token)
+        current_user.email = email
+        current_user.password = password
+        current_user.active = False
+        update_status = await current_user.db_update()
+        if not update_status:
+            return json(Response.make(code=1000), status=400)
 
         token = get_random_str(20)
         email_status = email_msg(request, email, self.request_arg.get('username'), token)
-        update_status = await current_user.db_update(pk=current_user.id, email=email, active=False)
         await current_user.gen_confirm_code(request, token)
-        if not email_status or not update_status:
+        if not email_status:
             return json(Response.make(code=1000), status=400)
 
         return json(Response.make(result='Success'))

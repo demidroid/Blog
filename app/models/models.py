@@ -40,6 +40,11 @@ class User(BaseModel):
             result = None
         return result
 
+    # async def db_update(self, pk, **kwargs):
+    #     if kwargs.get('password'):
+    #         self.password = kwargs.get("password")
+
+
 
 class Blog(BaseModel):
     title = CharField(max_length=125)

@@ -34,10 +34,9 @@ class BaseModel(peewee.Model):
             result = None
         return result
 
-    async def db_update(self, pk, **kwargs):
-        query = self.update(**kwargs).where(self.id == pk)
+    async def db_update(self):
         try:
-            result = await self.pee.execute(query)
+            result = await self.pee.update(self)
         except self.error:
             result = None
         return result
