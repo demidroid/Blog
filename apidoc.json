@@ -1,0 +1,7 @@
+{
+  "name": "Blog",
+  "version": "0.1.0",
+  "description": "a blog powered by sanic",
+  "title": "Blog",
+  "url" : "https://lome-blog.herokuapp.com"
+}

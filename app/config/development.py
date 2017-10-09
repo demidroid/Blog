@@ -17,3 +17,9 @@ class DevelopConfig(BaseConfig):
         "minsize": 5,
         "maxsize": 10
     }
+
+    EMAIL = {
+        "from_addr": "example@163.com",
+        "password": "Y7B9XA5EsdaddDda",
+        "smtp_server": "smtp.163.com"
+    }

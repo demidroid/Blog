@@ -18,8 +18,8 @@ class User(BaseModel):
     def password(self, password):
         self.password_hash = generate_password(password)
 
-    def verify_passeord(self, password):
-        return verify_password(password, self.password)
+    def verify_password(self, password):
+        return verify_password(password, self.password_hash)
 
     async def gen_confirm_code(self, request, token):
         code_dict = {
@@ -31,7 +31,6 @@ class User(BaseModel):
             tr.hmset_dict(token, code_dict)
             tr.expire(token, request.app.config.TOKEN_EXPIRE)
             await tr.execute()
-        return token
 
     @classmethod
     async def db_get(cls, **kwargs):

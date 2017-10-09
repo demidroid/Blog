@@ -6,7 +6,7 @@ from app.utils.http_response import Response
 def login_require(permission):
     def auth_login(f):
         @wraps(f)
-        async def decorator(*args, **kwargs):
+        def decorator(*args, **kwargs):
             if args:
                 request = args[0]
                 if not request.get('current_user') and permission.upper() == 'LOGIN':
