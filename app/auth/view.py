@@ -123,8 +123,9 @@ class RegisterView(BaseView):
             return self.error_resp
 
         email = self.request_arg.get('email')
+        username = self.request_arg.get('username')
         user = await User.db_get(email=email)
-        if user:
+        if user or not username:
             return json(Response.make(code=1002), status=400)
 
         token = get_random_str(20)
@@ -196,19 +197,16 @@ class ChangeAuthView(BaseView):
 
     async def post(self, request):
         """
-        @api {post} /account 修改邮箱
+        @api {post} /account Account
         @apiVersion 0.0.1
-        @apiName Confirm-get
-        @apiDescription 账户邮箱激活
+        @apiName Change-auth
+        @apiDescription 更改邮箱，密码
         @apiGroup Auth
 
-        @apiSuccessExample {json} Success-Response:
-        HTTP/1.1 200 OK
-        Connection: keep-alive
-        Content-Length: 49
-        Content-Type: application/json
-        Keep-Alive: 60
+        @apiParam {string} email 邮箱
+        @apiParam {string} password 用户密码
 
+        @apiSuccessExample {json} Success-Response:
         HTTP/1.1 200 OK
         Connection: keep-alive
         Content-Length: 49
