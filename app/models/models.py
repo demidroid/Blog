@@ -62,3 +62,4 @@ class Blog(BaseModel):
     title = CharField(max_length=125)
     content = CharField()
     create_time = TimeField(default=datetime.datetime.now)
+    last_update_time = TimeField(default=datetime.datetime.now)

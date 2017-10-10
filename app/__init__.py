@@ -11,6 +11,7 @@ from app.utils.http_response import Response
 
 
 from .auth import auth_bp
+from .blogs import blog_bp
 
 
 def create_app(config_name):
@@ -18,6 +19,7 @@ def create_app(config_name):
     app.config.from_object(config[config_name])
 
     app.blueprint(auth_bp)
+    app.blueprint(blog_bp)
 
     @app.listener('before_server_start')
     async def set_db(_app, _loop):
