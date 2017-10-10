@@ -1,4 +1,5 @@
 import peewee
+import datetime
 from peewee import *
 from .basemodel import BaseModel
 from app.utils.security import generate_password, verify_password
@@ -9,6 +10,10 @@ class User(BaseModel):
     username = CharField()
     password_hash = CharField(max_length=256)
     active = BooleanField(default=False)
+    followed_value = SmallIntegerField(default=0)
+    follow_value = SmallIntegerField(default=0)
+    create_time = TimeField(default=datetime.datetime.now)
+    last_login_time = TimeField(default=datetime.datetime.now)
 
     @property
     def password(self):
@@ -40,12 +45,20 @@ class User(BaseModel):
             result = None
         return result
 
-    # async def db_update(self, pk, **kwargs):
-    #     if kwargs.get('password'):
-    #         self.password = kwargs.get("password")
 
+class Follow(BaseModel):
+    follower = ForeignKeyField(User, related_name='follow_user')
+    followed = ForeignKeyField(User, related_name='followed_user')
+    create_time = TimeField(default=datetime.datetime.now)
+
+    class Meta:
+        indexes = (
+            (('follower', 'followed'), True),
+        )
 
 
 class Blog(BaseModel):
+    author = ForeignKeyField(User, related_name='user')
     title = CharField(max_length=125)
     content = CharField()
+    create_time = TimeField(default=datetime.datetime.now)

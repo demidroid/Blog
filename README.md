@@ -9,3 +9,7 @@ detail
 
 ### Webserver
 * Heroku
+
+### API 文档
+* cd docs
+* python -m http.server

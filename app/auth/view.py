@@ -1,7 +1,7 @@
 from sanic import Blueprint
 from sanic.response import json
 
-from app.models import User
+from app.models import User, Follow, database
 from app.base import BaseView
 from app.utils import Response
 from .schema import UserSchema
@@ -247,8 +247,6 @@ class ChangeAuthView(BaseView):
                 ]
             }
         }
-
-
         """
         current_user = request.get("current_user")
         self._check_request(request, UserSchema)
@@ -281,7 +279,89 @@ class ChangeAuthView(BaseView):
         return json(Response.make(result='Success'))
 
 
+class FollowView(BaseView):
+    decorators = [login_require('login')]
+
+    async def post(self, request, pk):
+        """
+        @api {post} /follow/<pk:int> Follow
+        @apiVersion 0.0.1
+        @apiName Follow-user
+        @apiDescription
+        @apiGroup Auth
+
+        @apiSuccessExample {json} Success-Response:
+        HTTP/1.1 200 OK
+        Connection: keep-alive
+        Content-Length: 49
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 0,
+            "message": "success",
+            "result": "Success"
+        }
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 400 Bad Request
+        Connection: keep-alive
+        Content-Length: 62
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1000,
+            "message": "系统错误"
+        }
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 400 Bad Request
+        Connection: keep-alive
+        Content-Length: 62
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1002,
+            "message": "请求参数有误",
+            "result": {
+                "email": [
+                    "Missing data for required field."
+                ]
+            }
+        }
+
+
+        """
+        current_user = request.get('current_user')
+        follow_user = await User.db_get(id=pk)
+        follow_record = await Follow.db_get(follower=current_user, followed=follow_user)
+        followed_value = follow_user.followed_value
+        follow_value = current_user.follow_value
+        if follow_record:
+            async with database.atomic_async():
+                follow_de = await Follow.db_delete(follow_record)
+                follow_user.followed_value = followed_value - 1
+                follow_up = await follow_user.db_update()
+                current_user.follow_value = follow_value - 1
+                current_up = await current_user.db_update()
+                result = bool(follow_de and follow_up and current_up)
+        else:
+            async with database.atomic_async():
+                follow_ce = await Follow.db_create(follower=current_user, followed=follow_user)
+                follow_user.followed_value = followed_value + 1
+                follow_up = await follow_user.db_update()
+                current_user.follow_value = follow_value + 1
+                current_up = await current_user.db_update()
+                result = bool(follow_ce and follow_up and current_up)
+        if not result:
+            return json(Response.make(code=1000), status=400)
+        return json(Response.make(code=0), status=200)
+
+
 auth_bp.add_route(LoginView.as_view(), '/login')
 auth_bp.add_route(RegisterView.as_view(), '/register')
 auth_bp.add_route(ConfirmView.as_view(), '/confirm/<token:[A-Z,a-z,0-9]{20,20}>')
 auth_bp.add_route(ChangeAuthView.as_view(), '/account')
+auth_bp.add_route(FollowView.as_view(), '/follow/<pk:int>')

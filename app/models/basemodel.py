@@ -40,3 +40,12 @@ class BaseModel(peewee.Model):
         except self.error:
             result = None
         return result
+
+    @classmethod
+    async def db_delete(cls, obj):
+        try:
+            result = await cls.pee.delete(obj)
+        except cls.error:
+            result = None
+        return result
+
