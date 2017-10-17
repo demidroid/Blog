@@ -14,6 +14,38 @@ class BlogView(BaseView):
     decorators = [login_require('login')]
 
     async def post(self, request):
+        """
+        @api {post} /follow/<pk:int> Follow
+        @apiVersion 0.0.1
+        @apiName Follow-user
+        @apiDescription
+        @apiGroup Auth
+
+        @apiSuccessExample {json} Success-Response:
+        HTTP/1.1 200 OK
+        Connection: keep-alive
+        Content-Length: 49
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 0,
+            "message": "success",
+            "result": "Success"
+        }
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 400 Bad Request
+        Connection: keep-alive
+        Content-Length: 62
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1000,
+            "message": "系统错误"
+        }
+        """
         current_user = request['current_user']
         self._check_request(request, BlogSchema)
         if self.error:
