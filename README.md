@@ -13,3 +13,7 @@ detail
 ### API 文档
 * cd docs
 * python -m http.server
+
+
+## 问题
+* 发送邮件没有支持异步

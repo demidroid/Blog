@@ -12,6 +12,7 @@ class User(BaseModel):
     active = BooleanField(default=False)
     followed_value = SmallIntegerField(default=0)
     follow_value = SmallIntegerField(default=0)
+    gender = SmallIntegerField(default=2)
     create_time = TimeField(default=datetime.datetime.now)
     last_login_time = TimeField(default=datetime.datetime.now)
 
@@ -60,6 +61,18 @@ class Follow(BaseModel):
 class Blog(BaseModel):
     author = ForeignKeyField(User, related_name='user')
     title = CharField(max_length=125)
-    content = CharField()
+    content = CharField(null=False)
+    like_value = IntegerField(default=0)
     create_time = TimeField(default=datetime.datetime.now)
     last_update_time = TimeField(default=datetime.datetime.now)
+
+    @classmethod
+    async def get_by(cls, count: int=10, page: int=1, sort: str='create_time', desc: int=0):
+        try:
+            order = getattr(cls, sort, 'create_time')
+            if desc:
+                order = order.desc()
+            result = await cls.pee.execute(cls.select().where().order_by(order).paginate(page, count))
+        except peewee.DoesNotExist:
+            result = None
+        return result

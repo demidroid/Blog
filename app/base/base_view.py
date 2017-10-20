@@ -23,6 +23,6 @@ class BaseView(HTTPMethodView):
         result, error = data_dumps(data, schema)
         if error:
             self.error = error
-            self.error_resp = json(Response.make(code=1002, result=error), status=400)
+            self.error_resp = json(Response.make(code=1000, result=error), status=400)
         self.response_arg = result
 

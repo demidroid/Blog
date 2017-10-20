@@ -16,7 +16,7 @@ class LoginView(BaseView):
 
     async def post(self, request):
         """
-        @api {post} /login Login
+        @api {post} /login 登录
         @apiVersion 0.0.1
         @apiName Login-post
         @apiDescription 登录
@@ -81,9 +81,9 @@ class RegisterView(BaseView):
 
     async def post(self, request):
         """
-        @api {post} /register Register
+        @api {post} /register 注册
         @apiVersion 0.0.1
-        @apiName Register-post
+        @apiName Register
         @apiDescription 注册
         @apiGroup Auth
 
@@ -130,7 +130,7 @@ class RegisterView(BaseView):
 
         token = get_random_str(20)
         current_user = await User.db_create(**self.request_arg)
-        email_status = email_msg(request, email, self.request_arg.get('username'), token)
+        email_status = await email_msg(request, email, self.request_arg.get('username'), token)
         if not email_status:
             return json(Response.make(code=1000), starus=400)
         await current_user.gen_confirm_code(request, token)
@@ -142,7 +142,7 @@ class ConfirmView(BaseView):
 
     async def get(self, request, token):
         """
-        @api {post} /confirm/<token> Confirm
+        @api {post} /confirm/<token> 用户验证
         @apiVersion 0.0.1
         @apiName Confirm-get
         @apiDescription 账户邮箱激活
@@ -197,7 +197,7 @@ class ChangeAuthView(BaseView):
 
     async def post(self, request):
         """
-        @api {post} /account Account
+        @api {post} /account 邮箱，密码修改
         @apiVersion 0.0.1
         @apiName Change-auth
         @apiDescription 更改邮箱，密码
@@ -284,7 +284,7 @@ class ChangeAuthView(BaseView):
             return json(Response.make(code=1000), status=400)
 
         token = get_random_str(20)
-        email_status = email_msg(request, email, self.request_arg.get('username'), token)
+        email_status = await email_msg(request, email, self.request_arg.get('username'), token)
         await current_user.gen_confirm_code(request, token)
         if not email_status:
             return json(Response.make(code=1000), status=400)
@@ -297,10 +297,10 @@ class FollowView(BaseView):
 
     async def post(self, request, pk):
         """
-        @api {post} /follow/<pk:int> Follow
+        @api {post} /follow/<pk:int> 关注用户
         @apiVersion 0.0.1
-        @apiName Follow-user
-        @apiDescription
+        @apiName Follow
+        @apiDescription 关注某个用户
         @apiGroup Auth
 
         @apiSuccessExample {json} Success-Response:

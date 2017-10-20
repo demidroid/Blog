@@ -24,7 +24,7 @@ def covert_msg(email_str):
     return formataddr((Header(name, 'utf-8').encode(), addr))
 
 
-def email_msg(request, to_addr, username, hash_str):
+async def email_msg(request, to_addr, username, hash_str):
     config_msg = request.app.config.EMAIL
     try:
         url = 'http://' + str(request.host) + '/confirm/' + hash_str
