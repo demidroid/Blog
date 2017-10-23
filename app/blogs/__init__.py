@@ -1,1 +1,2 @@
-from .view import blog_bp
+from .views import blog_bp
+from .schema import BlogSchema

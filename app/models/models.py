@@ -63,16 +63,54 @@ class Blog(BaseModel):
     title = CharField(max_length=125)
     content = CharField(null=False)
     like_value = IntegerField(default=0)
+    is_delete = BooleanField(default=False)
     create_time = TimeField(default=datetime.datetime.now)
     last_update_time = TimeField(default=datetime.datetime.now)
 
     @classmethod
-    async def get_by(cls, count: int=10, page: int=1, sort: str='create_time', desc: int=0):
+    async def get_by(cls, count: int=10, page: int=1, sort: str='create_time', desc: int=0, **kwargs):
         try:
             order = getattr(cls, sort, 'create_time')
             if desc:
                 order = order.desc()
-            result = await cls.pee.execute(cls.select().where().order_by(order).paginate(page, count))
+            if kwargs:
+                if kwargs.get("author"):
+                    condition = getattr(cls, 'author_id')
+                else:
+                    condition = getattr(cls, list(kwargs.keys())[0])
+                sql = cls.select().where().order_by(order).paginate(page, count)
+            else:
+                sql = cls.select().where().order_by(order).paginate(page, count)
+            result = await cls.pee.execute(sql)
+        except peewee.DoesNotExist:
+            result = None
+        return result
+
+
+class Comment(BaseModel):
+    author = ForeignKeyField(User, related_name='comment_user')
+    blog_user = ForeignKeyField(User, related_name='blog_author')
+    blog = ForeignKeyField(Blog, related_name='blog')
+    content = CharField(null=False)
+    like_value = IntegerField(default=0)
+    is_delete = BooleanField(default=False)
+    create_time = TimeField(datetime.datetime.now)
+
+    @classmethod
+    async def get_by(cls, count: int=10, page: int=1, sort: str='create_time', desc: int=0, **kwargs):
+        try:
+            order = getattr(cls, sort, 'create_time')
+            if desc:
+                order = order.desc()
+            if kwargs:
+                if kwargs.get("blog"):
+                    condition = getattr(cls, 'blog.id')
+                else:
+                    condition = getattr(cls, list(kwargs.keys())[0])
+                sql = cls.select().where(condition).order_by(order).paginate(page, count)
+            else:
+                sql = cls.select().where().order_by(order).paginate(page, count)
+            result = await cls.pee.execute(sql)
         except peewee.DoesNotExist:
             result = None
         return result

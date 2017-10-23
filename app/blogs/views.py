@@ -168,9 +168,18 @@ class BlogsView(BaseView):
         return json(Response.make(result=self.response_arg))
 
 
-# class UserBlogView(BaseView):
-#
-#     async def get(self, request, pk):
-#         self._check_request(request, PageSchema)
+class UserBlogView(BaseView):
+
+    async def get(self, request, pk):
+        self._check_request(request, PageSchema)
+        blogs = await Blog.get_by(**self.request_arg, author=pk)
+        if not blogs:
+            return json(Response.make(code=1002), status=400)
+        self._check_data(blogs, BlogSchema(many=True))
+        if self.error:
+            return self.error_resp
+        return json(Response.make(result=self.response_arg))
+
 blog_bp.add_route(BlogView.as_view(), '/blog')
 blog_bp.add_route(BlogsView.as_view(), '/blogs')
+blog_bp.add_route(UserBlogView.as_view(), '/<pk:int>/blogs')

@@ -34,8 +34,10 @@ class BaseModel(peewee.Model):
             result = None
         return result
 
-    async def db_update(self):
+    async def db_update(self, **kwargs):
         try:
+            for name, value in kwargs.items():
+                setattr(self, name, value)
             result = await self.pee.update(self)
         except self.error:
             result = None

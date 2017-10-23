@@ -1,4 +1,4 @@
-from .models import User, Follow, Blog
+from .models import User, Follow, Blog, Comment
 from .basemodel import database
 
-tables = [User, Follow, Blog]
+tables = [User, Follow, Blog, Comment]
