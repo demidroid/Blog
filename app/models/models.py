@@ -35,6 +35,9 @@ class User(BaseModel):
         with await request.app.redis as coon:
             tr = coon.multi_exec()
             tr.hmset_dict(token, code_dict)
+            key = request.app.config.TOKEN_STR + str(self.id)
+            tr.set(key, token)
+            tr.expire(key, request.app.config.TOKEN_EXPIRE)
             tr.expire(token, request.app.config.TOKEN_EXPIRE)
             await tr.execute()
 
