@@ -209,11 +209,70 @@ class MyBlogView(BaseView):
     decorators = [login_require('login')]
 
     async def get(self, request):
+        """
+        @api {get} /my/blogs 我的博客
+        @apiVersion 0.0.1
+        @apiName my-blogs
+        @apiDescription 获取我的博客
+        @apiGroup My
+
+        @apiSuccessExample {json} Success-Response:
+        HTTP/1.1 200 OK
+        Connection: keep-alive
+        Content-Length: 193
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 0,
+            "message": "success",
+            "result": ［
+                {
+                    "author": {
+                        "email": "1209518758@qq.com",
+                        "id": 1,
+                        "username": "loyo"
+                    },
+                    "content": "lallala",
+                    "create_time": "11:29:46.118981+00:00",
+                    "id": 7,
+                    "last_update_time": "11:29:46.118985+00:00",
+                    "like_value": 0,
+                    "title": "llalalla"
+                },
+            ]
+
+        }
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 400 Bad Request
+        Connection: keep-alive
+        Content-Length: 120
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1000,
+            "message": "系统错误"
+        }
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 401 Unauthorized
+        Connection: keep-alive
+        Content-Length: 68
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1001,
+            "message": "账号或密码错误"
+        }
+        """
         self._check_request(request, PageSchema)
         if self.error:
             return self.error_resp
         current_user = request.get('current_user')
-        blogs = await Blog.get_by(**self.request_arg, author=current_user.id)
+        blogs = await Blog.get_by(**self.request_arg, author=current_user)
         self._check_data(blogs, BlogSchema(many=True))
         if self.error:
             return self.error_resp

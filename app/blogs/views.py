@@ -146,7 +146,6 @@ class BlogsView(BaseView):
             ]
         }
 
-
         @apiErrorExample {json} Error-Response:
         HTTP/1.1 400 Bad Request
         Connection: keep-alive
@@ -171,8 +170,61 @@ class BlogsView(BaseView):
 class UserBlogView(BaseView):
 
     async def get(self, request, pk):
+        """
+       @api {get} /<pk:int>/blogs 用户博客查询
+       @apiVersion 0.0.1
+       @apiName user-blogs
+       @apiDescription 查询用户博客
+       @apiGroup User
+
+       @apiParam {String} [sort=create_time] 排序条件
+       @apiParam {Integer} [page=1] 页码
+       @apiParam {Integer} [count=10] 每页数量
+       @apiParam {Integer=0,1} [desc=0] 是否倒序排列
+
+       @apiSuccessExample {json} Success-Response:
+       HTTP/1.1 200 OK
+       Connection: keep-alive
+       Content-Length: 253
+       Content-Type: application/json
+       Keep-Alive: 60
+
+       {
+           "code": 0,
+           "message": "success",
+           "result": [
+                {
+                    "author": {
+                        "email": "1209518758@qq.com",
+                        "id": 1,
+                        "username": "loyo"
+                    },
+                    "content": "lallala",
+                    "create_time": "11:29:46.118981+00:00",
+                    "id": 7,
+                    "last_update_time": "11:29:46.118985+00:00",
+                    "like_value": 0,
+                    "title": "llalalla"
+                }
+
+           ]
+       }
+
+
+       @apiErrorExample {json} Error-Response:
+       HTTP/1.1 400 Bad Request
+       Connection: keep-alive
+       Content-Length: 62
+       Content-Type: application/json
+       Keep-Alive: 60
+
+       {
+           "code": 1000,
+           "message": "系统错误"
+       }
+       """
         self._check_request(request, PageSchema)
-        blogs = await Blog.get_by(**self.request_arg, author=pk)
+        blogs = await Blog.get_by(**self.request_arg, author_id=pk)
         if not blogs:
             return json(Response.make(code=1002), status=400)
         self._check_data(blogs, BlogSchema(many=True))

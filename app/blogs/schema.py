@@ -4,6 +4,7 @@ from app.auth.schema import UserSchema
 
 
 class BlogSchema(Schema):
+    id = fields.Integer(dump_only=True)
     author = fields.Nested(UserSchema, dump_only=True)
     title = fields.String(required=True)
     content = fields.String(required=True)
