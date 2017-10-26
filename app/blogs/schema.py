@@ -1,12 +1,5 @@
 from marshmallow import Schema, fields
-
-
-class BaseUserSchema(Schema):
-    id = fields.Integer(dump_only=True)
-    username = fields.String()
-    followed_value = fields.Integer(dump_only=True)
-    follow_value = fields.Integer(dump_only=True)
-    gender = fields.Integer()
+from app.users.schema import BaseUserSchema
 
 
 class BaseBlogSchema(Schema):

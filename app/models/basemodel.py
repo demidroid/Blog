@@ -51,3 +51,19 @@ class BaseModel(peewee.Model):
             result = None
         return result
 
+    @classmethod
+    async def get_by(cls, count: int=10, page: int=1, sort: str='create_time', desc: int=0, **kwargs):
+        try:
+            order = getattr(cls, sort, 'create_time')
+            if desc:
+                order = order.desc()
+            if kwargs:
+                for key, value in kwargs.items():
+                    setattr(cls, key, value)
+                sql = cls.select().order_by(order).paginate(page, count)
+            else:
+                sql = cls.select().order_by(order).paginate(page, count)
+            result = await cls.pee.execute(sql)
+        except peewee.DoesNotExist:
+            result = None
+        return result
