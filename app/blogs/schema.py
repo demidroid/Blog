@@ -7,6 +7,7 @@ class BaseBlogSchema(Schema):
     title = fields.String(required=True)
     content = fields.String(required=True)
     like_value = fields.Integer(dump_only=True)
+    is_delete = fields.Boolean(dump_only=True)
     create_time = fields.DateTime(dump_only=True)
 
 

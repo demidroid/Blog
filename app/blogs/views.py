@@ -160,7 +160,7 @@ class BlogsView(BaseView):
         """
         self._check_request(request, PageSchema)
 
-        blogs = await Blog.get_by(**self.request_arg)
+        blogs = await Blog.get_by(**self.request_arg, is_delete=False)
         self._check_data(blogs, BlogsSchema(many=True))
         if self.error:
             return self.error_resp
@@ -227,7 +227,7 @@ class UserBlogView(BaseView):
        """
         self._check_request(request, PageSchema)
         user = await User.db_get(id=pk)
-        blogs = await Blog.get_by(**self.request_arg, author=user)
+        blogs = await Blog.get_by(**self.request_arg, author=user, is_delete=False)
         if not blogs:
             return json(Response.make(code=1002), status=400)
         self._check_data(blogs, BaseBlogSchema(many=True))

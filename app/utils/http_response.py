@@ -29,6 +29,11 @@ class Response:
         "message": "数据库错误"
     }
 
+    error_1005 = {
+        "code": 1005,
+        "message": "请求资源不存在"
+    }
+
     system_404 = {
         "code": 404,
         "message": "Not Found"
