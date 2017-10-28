@@ -11,7 +11,7 @@ class BaseBlogSchema(Schema):
     create_time = fields.DateTime(dump_only=True)
 
 
-class BlogSchema(Schema):
+class BlogSchema(BaseBlogSchema):
     last_update_time = fields.DateTime(dump_only=True)
 
 

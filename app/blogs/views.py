@@ -329,7 +329,18 @@ class MyBlogView(BaseView):
         return json(Response.make(result=result))
 
 
+class SingleBlogView(BaseView):
+
+    async def get(self, request, blog_id):
+        blog = await Blog.db_get(id=blog_id)
+        self._check_data(blog, BlogsSchema())
+        if self.error:
+            return self.error_resp
+
+        return json(Response.make(result=self.response_arg))
+
 blog_bp.add_route(BlogView.as_view(), '/blog')
 blog_bp.add_route(BlogsView.as_view(), '/blogs')
 blog_bp.add_route(UserBlogView.as_view(), '/<pk:int>/blogs')
 blog_bp.add_route(MyBlogView.as_view(), '/my/blogs')
+blog_bp.add_route(SingleBlogView.as_view(), '/blogs/<blog_id:int>')

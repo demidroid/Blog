@@ -77,4 +77,20 @@ class Comment(BaseModel):
     content = CharField(null=False)
     like_value = IntegerField(default=0)
     is_delete = BooleanField(default=False)
-    create_time = TimeField(datetime.datetime.now)
+    create_time = TimeField(default=datetime.datetime.now)
+
+    class Meta:
+        indexes = (
+            (('author', 'blog'), False),
+        )
+
+    @classmethod
+    async def db_create(cls, **kwargs):
+        try:
+            sql = cls.insert(**kwargs)
+            result = await cls.pee.execute(sql)
+        except cls.error as e:
+            # TODO: 添加日志
+            print(e)
+            result = None
+        return result

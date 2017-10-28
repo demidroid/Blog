@@ -30,14 +30,19 @@ class BaseModel(peewee.Model):
     async def db_create(cls, **kwargs):
         try:
             result = await cls.pee.create(cls, **kwargs)
-        except cls.error:
+        except cls.error as e:
+            # TODO: 添加日志
+            print(e)
             result = None
         return result
 
     async def db_update(self, **kwargs):
         try:
             for name, value in kwargs.items():
-                setattr(self, name, value)
+                if hasattr(self, name):
+                    setattr(self, name, value)
+                else:
+                    pass
             result = await self.pee.update(self)
         except self.error:
             result = None
@@ -59,7 +64,10 @@ class BaseModel(peewee.Model):
                 order = order.desc()
             if kwargs:
                 for key, value in kwargs.items():
-                    setattr(cls, key, value)
+                    if hasattr(cls, key):
+                        setattr(cls, key, value)
+                    else:
+                        pass
                 sql = cls.select().order_by(order).paginate(page, count)
             else:
                 sql = cls.select().order_by(order).paginate(page, count)

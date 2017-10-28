@@ -41,14 +41,11 @@ class CommentsView(BaseView):
             return json(Response.make(code=1005), status=400)
         author = request.get('current_user')
 
-        comment = await Comment.db_create(blog=blog, author=author, is_delete=False, **self.request_arg)
+        comment = await Comment.db_create(blog=blog, author=author, **self.request_arg)
         if not comment:
             return json(Response.make(code=1004), status=400)
 
         return await self.get(request, blog_id)
-
-    async def patch(self, request):
-        pass
 
 
 class CommentView(BaseView):
