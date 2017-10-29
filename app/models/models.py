@@ -49,6 +49,27 @@ class User(BaseModel):
             result = None
         return result
 
+    async def follow(self, follow_record, follow_user):
+        followed_value = follow_user.followed_value
+        follow_value = self.follow_value
+        if follow_record:
+            with self._meta.database.atomic_async():
+                follow_de = await Follow.db_delete(follow_record)
+                follow_user.followed_value = followed_value - 1
+                follow_up = await follow_user.db_update()
+                self.follow_value = follow_value - 1
+                current_up = await self.db_update()
+                result = bool(follow_de and follow_up and current_up)
+        else:
+            with self._meta.database.atomic_async():
+                follow_ce = await Follow.db_create(follower=self, followed=follow_user)
+                follow_user.followed_value = followed_value + 1
+                follow_up = await follow_user.db_update()
+                self.follow_value = follow_value + 1
+                current_up = await self.db_update()
+                result = bool(follow_ce and follow_up and current_up)
+        return result
+
 
 class Follow(BaseModel):
     follower = ForeignKeyField(User, related_name='follow_user')

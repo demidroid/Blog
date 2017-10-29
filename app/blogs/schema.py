@@ -17,3 +17,8 @@ class BlogSchema(BaseBlogSchema):
 
 class BlogsSchema(BlogSchema):
     author = fields.Nested(BaseUserSchema, dump_only=True)
+
+
+class PatchBlogSchema(Schema):
+    title = fields.String(required=False)
+    content = fields.String(required=False)

@@ -9,3 +9,4 @@ class CommentSchema(Schema):
     like_value = fields.Integer(dump_only=True)
     is_delete = fields.Boolean(dump_only=True)
     create_time = fields.DateTime(dump_only=True)
+    blog = fields.Integer(dump_only=True)

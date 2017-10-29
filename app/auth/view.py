@@ -1,7 +1,7 @@
 from sanic import Blueprint
 from sanic.response import json
 
-from app.models import User, Follow, database
+from app.models import User, Follow
 from app.base import BaseView
 from app.utils import Response
 from .schema import UserSchema
@@ -276,10 +276,7 @@ class ChangeAuthView(BaseView):
         with await request.app.redis as coon:
             token = request.headers.get('authorization').split(" ")[1]
             await coon.delete(token)
-        current_user.email = email
-        current_user.password = password
-        current_user.active = False
-        update_status = await current_user.db_update()
+        update_status = await current_user.db_update(email=email, password=password, active=False)
         if not update_status:
             return json(Response.make(code=1000), status=400)
 
@@ -344,24 +341,8 @@ class FollowView(BaseView):
         current_user = request.get('current_user')
         follow_user = await User.db_get(id=pk)
         follow_record = await Follow.db_get(follower=current_user, followed=follow_user)
-        followed_value = follow_user.followed_value
-        follow_value = current_user.follow_value
-        if follow_record:
-            async with database.atomic_async():
-                follow_de = await Follow.db_delete(follow_record)
-                follow_user.followed_value = followed_value - 1
-                follow_up = await follow_user.db_update()
-                current_user.follow_value = follow_value - 1
-                current_up = await current_user.db_update()
-                result = bool(follow_de and follow_up and current_up)
-        else:
-            async with database.atomic_async():
-                follow_ce = await Follow.db_create(follower=current_user, followed=follow_user)
-                follow_user.followed_value = followed_value + 1
-                follow_up = await follow_user.db_update()
-                current_user.follow_value = follow_value + 1
-                current_up = await current_user.db_update()
-                result = bool(follow_ce and follow_up and current_up)
+        result = await current_user.follow(follow_record=follow_record, follow_user=follow_user)
+
         if not result:
             return json(Response.make(code=1000), status=400)
         return json(Response.make(), status=200)

@@ -3,7 +3,7 @@ from sanic.response import json
 
 from app.base import BaseView, PageSchema
 from app.decorators import login_require
-from .schema import BlogSchema, BaseBlogSchema, BlogsSchema, BaseUserSchema
+from .schema import BlogSchema, BaseBlogSchema, BlogsSchema, BaseUserSchema, PatchBlogSchema
 from app.models import Blog, User
 from app.utils.http_response import Response
 
@@ -175,7 +175,7 @@ class UserBlogView(BaseView):
        @apiVersion 0.0.1
        @apiName user-blogs
        @apiDescription 查询用户博客
-       @apiGroup User
+       @apiGroup Blog
 
        @apiParam {String} [sort=create_time] 排序条件
        @apiParam {Integer} [page=1] 页码
@@ -253,7 +253,12 @@ class MyBlogView(BaseView):
         @apiVersion 0.0.1
         @apiName my-blogs
         @apiDescription 获取我的博客
-        @apiGroup My
+        @apiGroup Blog
+
+        @apiParam {String} [sort=create_time] 排序条件
+        @apiParam {Integer} [page=1] 页码
+        @apiParam {Integer} [count=10] 每页数量
+        @apiParam {Integer=0,1} [desc=0] 是否倒序排列
 
         @apiSuccessExample {json} Success-Response:
         HTTP/1.1 200 OK
@@ -314,7 +319,7 @@ class MyBlogView(BaseView):
         if self.error:
             return self.error_resp
         current_user = request.get('current_user')
-        blogs = await Blog.get_by(**self.request_arg, author=current_user)
+        blogs = await Blog.get_by(**self.request_arg, author=current_user, is_delete=False)
         self._check_data(blogs, BaseBlogSchema(many=True))
         if self.error:
             return self.error_resp
@@ -330,17 +335,203 @@ class MyBlogView(BaseView):
 
 
 class SingleBlogView(BaseView):
+    decorators = [login_require('login')]
 
     async def get(self, request, blog_id):
-        blog = await Blog.db_get(id=blog_id)
+        """
+        @api {get} /blogs/<blog_id:int> 查看单个博客内容
+        @apiVersion 0.0.1
+        @apiName Single-blog
+        @apiDescription 查询单个博客的具体内容
+        @apiGroup Blog
+
+        @apiSuccessExample {json} Success-Response:
+        HTTP/1.1 200 OK
+        Connection: keep-alive
+        Content-Length: 280
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 0,
+            "message": "success",
+            "result": {
+                "author": {
+                    "follow_value": 0,
+                    "followed_value": 0,
+                    "gender": 2,
+                    "id": 1,
+                    "username": "jjjj"
+                },
+                "content": "yyyyyy",
+                "create_time": "20:20:01.730670+00:00",
+                "id": 1,
+                "is_delete": false,
+                "last_update_time": "20:20:01.730676+00:00",
+                "like_value": 0,
+                "title": "wwwww"
+            }
+        }
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 400 Bad Request
+        Connection: keep-alive
+        Content-Length: 120
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1000,
+            "message": "系统错误"
+        }
+        """
+        blog = await Blog.db_get(id=blog_id, is_delete=False)
         self._check_data(blog, BlogsSchema())
         if self.error:
             return self.error_resp
 
         return json(Response.make(result=self.response_arg))
 
+    async def patch(self, request, blog_id):
+        """
+        @api {patch} /blogs/<blog_id:int> 修改博客数据
+        @apiVersion 0.0.1
+        @apiName update-blog
+        @apiDescription 修改博客的数据
+        @apiGroup Blog
+
+        @apiParam {string} [title] 博客标题
+        @apiParam {string} [content] 博客内容
+
+        @apiSuccessExample {json} Success-Response:
+        HTTP/1.1 200 OK
+        Connection: keep-alive
+        Content-Length: 280
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 0,
+            "message": "success",
+            "result": {
+                "author": {
+                    "follow_value": 0,
+                    "followed_value": 0,
+                    "gender": 2,
+                    "id": 1,
+                    "username": "jjjj"
+                },
+                "content": "yyyyyy",
+                "create_time": "20:20:01.730670+00:00",
+                "id": 1,
+                "is_delete": false,
+                "last_update_time": "20:20:01.730676+00:00",
+                "like_value": 0,
+                "title": "wwwww"
+            }
+        }
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 400 Bad Request
+        Connection: keep-alive
+        Content-Length: 50
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1003,
+            "message": "权限不足"
+        }
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 400 Bad Request
+        Connection: keep-alive
+        Content-Length: 68
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1005,
+            "message": "请求资源不存在"
+        }
+        """
+        current_user = request.get('current_user')
+        self._check_request(request, PatchBlogSchema)
+        if self.error:
+            return self.error_resp
+
+        blog = await Blog.db_get(id=blog_id, is_delete=False)
+        if not blog:
+            return json(Response.make(code=1005), status=400)
+
+        if not current_user.id == blog.author_id:
+            return json(Response.make(code=1003), status=400)
+
+        blog_n = await blog.db_update(**self.request_arg)
+        if not blog_n:
+            return json(Response.make(code=1004), status=400)
+        return await self.get(request, blog_id)
+
+    async def delete(self, request, blog_id):
+        """
+        @api {delete} /blogs/<blog_id:int> 删除博客
+        @apiVersion 0.0.1
+        @apiName delete-blog
+        @apiDescription 删除博客
+        @apiGroup Blog
+
+        @apiSuccessExample {json} Success-Response:
+        HTTP/1.1 200 OK
+        Connection: keep-alive
+        Content-Length: 280
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 0,
+            "message": "success"
+        }
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 400 Bad Request
+        Connection: keep-alive
+        Content-Length: 50
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1003,
+            "message": "权限不足"
+        }
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 400 Bad Request
+        Connection: keep-alive
+        Content-Length: 68
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1005,
+            "message": "请求资源不存在"
+        }
+        """
+        current_user = request.get('current_user')
+        blog = await Blog.db_get(id=blog_id, is_delete=False)
+        if not blog:
+            return json(Response.make(code=1005), status=400)
+
+        if not current_user.id == blog.author_id:
+            return json(Response.make(code=1003), status=400)
+
+        blog_n = await blog.db_update(is_delete=True)
+        if not blog_n:
+            return json(Response.make(code=1004), status=400)
+        return json(Response.make())
+
+
 blog_bp.add_route(BlogView.as_view(), '/blog')
 blog_bp.add_route(BlogsView.as_view(), '/blogs')
-blog_bp.add_route(UserBlogView.as_view(), '/<pk:int>/blogs')
+blog_bp.add_route(UserBlogView.as_view(), 'user/<pk:int>/blogs')
 blog_bp.add_route(MyBlogView.as_view(), '/my/blogs')
 blog_bp.add_route(SingleBlogView.as_view(), '/blogs/<blog_id:int>')
