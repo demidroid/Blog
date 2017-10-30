@@ -18,3 +18,6 @@ class MyInfoSchema(UserSchema):
     email = fields.String(dump_only=True)
 
 
+class FollowSchema(Schema):
+    followed = fields.Nested(BaseUserSchema)
+    follower = fields.Nested(BaseUserSchema)

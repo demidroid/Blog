@@ -2,10 +2,11 @@ from sanic.response import json
 from sanic import Blueprint
 
 from app.base import BaseView
-from app.models import User
-from .schema import UserSchema, MyInfoSchema
+from app.models import User, Follow
+from .schema import UserSchema, MyInfoSchema, FollowSchema
 from app.utils.http_response import Response
 from app.decorators import login_require
+from app.base.schema import PageSchema
 
 user_bp = Blueprint('user')
 
@@ -216,5 +217,101 @@ class MyInfoView(BaseView):
         return await self.get(request)
 
 
-user_bp.add_route(UserInfoView.as_view(), '/<pk:int>/info')
+class FollowView(BaseView):
+    decorators = [login_require('login')]
+
+    async def post(self, request, pk):
+        """
+        @api {post} /follow/<pk:int> 关注用户
+        @apiVersion 0.0.1
+        @apiName Follow
+        @apiDescription 关注某个用户
+        @apiGroup Auth
+
+        @apiSuccessExample {json} Success-Response:
+        HTTP/1.1 200 OK
+        Connection: keep-alive
+        Content-Length: 49
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 0,
+            "message": "success",
+            "result": "Success"
+        }
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 400 Bad Request
+        Connection: keep-alive
+        Content-Length: 62
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1000,
+            "message": "系统错误"
+        }
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 401 Unauthorized
+        Connection: keep-alive
+        Content-Length: 68
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1001,
+            "message": "账号或密码错误"
+        }
+
+        """
+        current_user = request.get('current_user')
+        follow_user = await User.db_get(id=pk)
+        follow_record = await Follow.db_get(follower_id=current_user.id, followed_id=follow_user.id)
+        if not follow_user:
+            return json(Response.make(code=1005), status=400)
+        result = await current_user.follow(follow_record=follow_record,
+                                           follow_user=follow_user, current_user=current_user)
+        if not result:
+            return json(Response.make(code=1000), status=400)
+        return json(Response.make(result='success'), status=200)
+
+
+class GetFollowView(BaseView):
+    decorators = [login_require('login')]
+
+    async def get(self, request):
+        self._check_request(request, PageSchema)
+        if self.error:
+            return self.error_resp
+
+        current_user = request.get('current_user')
+        follow_users = await Follow.get_by(**self.request_arg, follower=current_user)
+        self._check_data(follow_users, FollowSchema(many=True))
+        if self.error:
+            return self.error_resp
+
+        return json(Response.make(result=self.response_arg))
+
+
+class GetFollowedView(BaseView):
+    decorators = [login_require('login')]
+
+    async def get(self, request):
+        self._check_request(request, PageSchema)
+        if self.error:
+            return self.error_resp
+        current_user = request.get('current_user')
+        followed_users = await Follow.get_by(**self.request_arg, followed=current_user)
+        self._check_data(followed_users, FollowSchema(many=True))
+        if self.error:
+            return self.error_resp
+
+        return json(Response.make(result=self.response_arg))
+
+user_bp.add_route(UserInfoView.as_view(), 'users/<pk:int>/info')
 user_bp.add_route(MyInfoView.as_view(), '/my/info')
+user_bp.add_route(FollowView.as_view(), '/users/<pk:int>/follow')
+user_bp.add_route(GetFollowView.as_view(), '/my/follow')
+user_bp.add_route(GetFollowedView.as_view(), '/my/followed')
