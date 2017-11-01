@@ -3,7 +3,7 @@ from sanic import Blueprint
 
 from app.base import BaseView
 from app.models import User, Follow
-from .schema import UserSchema, MyInfoSchema, FollowSchema
+from .schema import UserSchema, MyInfoSchema, FollowedSchema, FollowerSchema
 from app.utils.http_response import Response
 from app.decorators import login_require
 from app.base.schema import PageSchema
@@ -222,11 +222,11 @@ class FollowView(BaseView):
 
     async def post(self, request, pk):
         """
-        @api {post} /follow/<pk:int> 关注用户
+        @api {post} /follow/<pk:int> 用户关注
         @apiVersion 0.0.1
         @apiName Follow
         @apiDescription 关注某个用户
-        @apiGroup Auth
+        @apiGroup User
 
         @apiSuccessExample {json} Success-Response:
         HTTP/1.1 200 OK
@@ -282,13 +282,69 @@ class GetFollowView(BaseView):
     decorators = [login_require('login')]
 
     async def get(self, request):
+        """
+        @api {post} /my/follow 我关注的用户
+        @apiVersion 0.0.1
+        @apiName My-Follow
+        @apiDescription 我关注的用户
+        @apiGroup My
+
+        @apiSuccessExample {json} Success-Response:
+        HTTP/1.1 200 OK
+        Connection: keep-alive
+        Content-Length: 128
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 0,
+            "message": "success",
+            "result": [
+                {
+                    "followed": {
+                        "follow_value": 1,
+                        "followed_value": 0,
+                        "gender": 2,
+                        "id": 1,
+                        "username": "jjjj"
+                    }
+                }
+            ]
+        }
+
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 400 Bad Request
+        Connection: keep-alive
+        Content-Length: 62
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1000,
+            "message": "系统错误"
+        }
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 401 Unauthorized
+        Connection: keep-alive
+        Content-Length: 68
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1001,
+            "message": "账号或密码错误"
+        }
+
+        """
         self._check_request(request, PageSchema)
         if self.error:
             return self.error_resp
 
         current_user = request.get('current_user')
         follow_users = await Follow.get_by(**self.request_arg, follower=current_user)
-        self._check_data(follow_users, FollowSchema(many=True))
+        self._check_data(follow_users, FollowedSchema(many=True))
         if self.error:
             return self.error_resp
 
@@ -299,12 +355,67 @@ class GetFollowedView(BaseView):
     decorators = [login_require('login')]
 
     async def get(self, request):
+        """
+        @api {post} /my/follow 关注我的用户
+        @apiVersion 0.0.1
+        @apiName Follow－Me
+        @apiDescription 关注的我用户
+        @apiGroup My
+
+        @apiSuccessExample {json} Success-Response:
+        HTTP/1.1 200 OK
+        Connection: keep-alive
+        Content-Length: 128
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 0,
+            "message": "success",
+            "result": [
+                {
+                    "follower": {
+                        "follow_value": 1,
+                        "followed_value": 0,
+                        "gender": 2,
+                        "id": 1,
+                        "username": "jjjj"
+                    }
+                }
+            ]
+        }
+
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 400 Bad Request
+        Connection: keep-alive
+        Content-Length: 62
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1000,
+            "message": "系统错误"
+        }
+
+        @apiErrorExample {json} Error-Response:
+        HTTP/1.1 401 Unauthorized
+        Connection: keep-alive
+        Content-Length: 68
+        Content-Type: application/json
+        Keep-Alive: 60
+
+        {
+            "code": 1001,
+            "message": "账号或密码错误"
+        }
+        """
         self._check_request(request, PageSchema)
         if self.error:
             return self.error_resp
         current_user = request.get('current_user')
         followed_users = await Follow.get_by(**self.request_arg, followed=current_user)
-        self._check_data(followed_users, FollowSchema(many=True))
+        self._check_data(followed_users, FollowerSchema(many=True))
         if self.error:
             return self.error_resp
 

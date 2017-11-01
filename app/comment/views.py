@@ -85,7 +85,7 @@ class CommentsView(BaseView):
         """
         @api {post} /blogs/<blog_id:int>/comments 博客评论
         @apiVersion 0.0.1
-        @apiName Blog-comments
+        @apiName Post-comment
         @apiDescription 评论一个博客的评论
         @apiGroup Comment
 
@@ -163,10 +163,10 @@ class CommentView(BaseView):
 
     async def delete(self, request, comment_id):
         """
-        @api {delete} /blogs/<blog_id:int>/comments 博客评论
+        @api {delete} /blogs/<blog_id:int>/comments 删除博客评论
         @apiVersion 0.0.1
-        @apiName Blog-comments
-        @apiDescription 评论一个博客的评论
+        @apiName Delete-Blog-comment
+        @apiDescription 删除一个博客的评论一个评论
         @apiGroup Comment
 
         @apiSuccessExample {json} Success-response:

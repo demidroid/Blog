@@ -175,7 +175,7 @@ class UserBlogView(BaseView):
        @apiVersion 0.0.1
        @apiName user-blogs
        @apiDescription 查询用户博客
-       @apiGroup Blog
+       @apiGroup User
 
        @apiParam {String} [sort=create_time] 排序条件
        @apiParam {Integer} [page=1] 页码
