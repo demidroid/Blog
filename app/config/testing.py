@@ -18,7 +18,7 @@ class TestConfig(BaseConfig):
     }
 
     EMAIL = {
-        "from_addr": "15757164314@163.com",
-        "password": "Y7B9XA5EqsrA9YRU",
+        "from_addr": "example@163.com",
+        "password": "fffffff",
         "smtp_server": "smtp.163.com"
     }
