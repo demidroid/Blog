@@ -12,7 +12,7 @@ httpie==0.9.9
 httptools==0.0.9
 idna==2.6
 Markdown==2.6.9
-marshmallow==2.13.6
+marshmallow==2.15.1
 multidict==3.2.0
 peewee==2.10.2
 peewee-async==0.5.7
