@@ -18,7 +18,7 @@ peewee==2.10.2
 peewee-async==0.5.7
 psycopg2==2.7.3.1
 Pygments==2.2.0
-requests==2.18.4
+requests==2.20.0
 sanic==0.6.0
 ujson==1.35
 urllib3==1.22
