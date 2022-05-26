@@ -20,7 +20,7 @@ psycopg2==2.7.3.1
 Pygments==2.2.0
 requests==2.18.4
 sanic==0.6.0
-ujson==1.35
+ujson==5.2.0
 urllib3==1.22
 uvloop==0.8.1
 websockets==3.4
